@@ -17,22 +17,26 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'users';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'day_of_birth',
+        'education',
+        'phone',
+        'bio',
+        'image',
+        'status',
+        'gender_id',
+        'province_id',
+        'district_id',
+        'ward_id',
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $attributes = [
+        'image' => '',
+        'status' => 'Not_activated',
     ];
-
     /**
      * The attributes that should be cast.
      *
@@ -40,6 +44,61 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
+    protected $dates = [
+        'day_of_birth',
+    ];
+    public function account()
+    {
+        return $this->hasOne(Account::class);
+    }
+
+    public function gender()
+    {
+        return $this->belongsTo(Gender::class);
+    }
+
+    public function provinces()
+    {
+        return $this->belongsTo(Provinces::class);
+    }
+
+    public function districts()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function ward()
+    {
+        return $this->belongsTo(Ward::class);
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'user_id', 'followed_user_id');
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'user_id');
+    }
+
+    public function follow(User $user)
+    {
+        if (!$this->isFollowing($user)) {
+            $this->following()->attach($user->id);
+        }
+    }
+
+    public function unFollow(User $user)
+    {
+        if ($this->isFollowing($user)) {
+            $this->following()->detach($user->id);
+        }
+    }
+
+    public function isFollowing(User $user)
+    {
+        return $this->following()->where('followed_user_id', $user->id)->exists();
+    }
 }
