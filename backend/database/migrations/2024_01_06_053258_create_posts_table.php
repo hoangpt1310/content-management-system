@@ -15,16 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('headline');
             $table->text('content');
-            $table->enum('status',['Public,Private,Draft'])->defaultValue('Draft');
+            $table->enum('status',['Public','Private','Draft'])->default('Draft');
             $table->unsignedInteger('view')->default(0);
             $table->unsignedInteger('like')->default(0);
             $table->unsignedInteger('unlike')->default(0);
             $table->unsignedInteger('share')->default(0);
-            $table->text('excerpt');
+            $table->text('excerpt')->nullable();
             $table->string('featured_image')->nullable();
 
-            $table->unsignedBigInteger('account_id');
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

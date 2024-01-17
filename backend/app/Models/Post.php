@@ -21,12 +21,12 @@ class Post extends Model
         'except',
         'featured_image',
         'category_id',
-        'account_id',
+        'user_id',
     ];
 
-    public function account()
+    public function user()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(User::class);
     }
     public function categories()
     {

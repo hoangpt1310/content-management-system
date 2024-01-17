@@ -3,14 +3,17 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable  implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,20 +25,19 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'password',
         'day_of_birth',
         'education',
         'phone',
         'bio',
         'image',
         'status',
-        'gender_id',
+        'gender',
         'province_id',
         'district_id',
         'ward_id',
-    ];
-    protected $attributes = [
-        'image' => '',
-        'status' => 'Not_activated',
+        'google_id',
+        'role_id',
     ];
     /**
      * The attributes that should be cast.
@@ -48,14 +50,26 @@ class User extends Authenticatable
     protected $dates = [
         'day_of_birth',
     ];
-    public function account()
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+    public function role()
     {
-        return $this->hasOne(Account::class);
+        return $this->belongsTo(Role::class);
     }
-
-    public function gender()
+    public function posts()
     {
-        return $this->belongsTo(Gender::class);
+        return $this->hasMany(Post::class);
+    }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     public function provinces()
@@ -100,5 +114,43 @@ class User extends Authenticatable
     public function isFollowing(User $user)
     {
         return $this->following()->where('followed_user_id', $user->id)->exists();
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->day_of_birth = $user->day_of_birth ?? Carbon::now(); // Nếu không có giá trị, sử dụng ngày hiện tại
+            $user->status = $user->status ?? 'Not_activated';
+            $user->gender = $user->gender ?? "Other";
+            $user->education = $user->education ?? "";
+            $user->phone = $user->phone ?? "";
+            $user->bio = $user->bio ?? "";
+            $user->image = $user->image ?? "";
+            $user->image = $user->image ?? "";
+            $user->province_id = $user->province_id ?? 1;
+            $user->district_id = $user->district_id ?? 1;
+            $user->ward_id = $user->ward_id ?? 1;
+            $user->role_id = $user->role_id ?? 1;
+        });
+    }
+   /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
