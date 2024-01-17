@@ -15,25 +15,30 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('password');
             $table->dateTime('day_of_birth');
             $table->string('education');
             $table->string('phone');
             $table->text('bio');
             $table->string('image')->nullable();
             $table->enum('status',['Activate','Not_activated'])->default('Not_activated');
-            $table->timestamp('email_verified_at')->nullable()->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->enum('gender',['Male','Female','Other'])->default('Other');
+            $table->string('google_id')->nullable()->unique();
+            $table->rememberToken()->nullable();
 
-            $table->unsignedBigInteger('gender_id')->nullable();
-            $table->foreign('gender_id')->references('id')->on('genders')->onDelete('cascade');
+            $table->timestamp('email_verified_at')->default(DB::raw('CURRENT_TIMESTAMP'));
 
-            $table->unsignedBigInteger('province_id')->nullable();
+            $table->unsignedBigInteger('province_id');
             $table->foreign('province_id')->references('id')->on('provinces')->onDelete('cascade');
 
-            $table->unsignedBigInteger('district_id')->nullable();
+            $table->unsignedBigInteger('district_id');
             $table->foreign('district_id')->references('id')->on('districts')->onDelete('cascade');
 
-            $table->unsignedBigInteger('ward_id')->nullable();
+            $table->unsignedBigInteger('ward_id');
             $table->foreign('ward_id')->references('id')->on('wards')->onDelete('cascade');
+
+            $table->unsignedBigInteger('role_id');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
 
             $table->timestamps();
         });

@@ -14,8 +14,8 @@ class Role extends Model
         'name',
     ];
 
-    public function account()
+    public function user()
     {
-        return $this->hasMany(Account::class);
+        return $this->hasMany(User::class);
     }
 }

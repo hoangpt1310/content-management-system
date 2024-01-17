@@ -12,15 +12,15 @@ class Comment extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'content',
-        'account_id',
+        'user_id',
         'parent_comment_id',
         'post_id',
         'image',
         'like',
     ];
-    public function account()
+    public function user()
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(User::class);
     }
     public function post()
     {

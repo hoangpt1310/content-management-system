@@ -14,14 +14,17 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->string('content');
-            $table->unsignedBigInteger('account_id');
-            $table->unsignedBigInteger('parent_comment_id')->nullable();
-            $table->unsignedBigInteger('post_id');
-            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
-            $table->foreign('parent_comment_id')->references('id')->on('comments')->onDelete('cascade');
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->string('image')->nullable();
             $table->unsignedInteger('like')->default(0);
+
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unsignedBigInteger('parent_comment_id')->nullable();
+            $table->foreign('parent_comment_id')->references('id')->on('comments')->onDelete('cascade');
+
+            $table->unsignedBigInteger('post_id');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
 
