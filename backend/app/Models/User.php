@@ -124,10 +124,9 @@ class User extends Authenticatable  implements JWTSubject
         parent::boot();
 
         static::creating(function ($user) {
-            $user->day_of_birth = $user->day_of_birth ?? Carbon::now(); // Nếu không có giá trị, sử dụng ngày hiện tại
+            $user->day_of_birth = $user->day_of_birth ?? Carbon::now();
             $user->status = $user->status ?? 'Not_activated';
             $user->gender = $user->gender ?? "Other";
-            $user->education = $user->education ?? "";
             $user->phone = $user->phone ?? "";
             $user->bio = $user->bio ?? "";
             $user->image = $user->image ?? "";
@@ -136,6 +135,7 @@ class User extends Authenticatable  implements JWTSubject
             $user->district_id = $user->district_id ?? 1;
             $user->ward_id = $user->ward_id ?? 1;
             $user->role_id = $user->role_id ?? 1;
+            $user->education_id = $user->education_id ?? 120;
         });
     }
    /**
